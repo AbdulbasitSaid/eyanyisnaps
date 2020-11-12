@@ -9,7 +9,10 @@
       <ion-grid>
         <ion-row>
           <ion-col size="6" :key="photo" v-for="photo in photos">
-            <ion-img :src="photo.webviewPath"></ion-img>
+            <ion-img
+              :src="photo.webviewPath"
+              @click="showActionSheet(photo)"
+            ></ion-img>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -41,31 +44,6 @@ import {
   IonRow,
   IonCol,
 } from "@ionic/vue";
-// other imports
-const showActionSheet = async (photo: Photo) => {
-  const actionSheet = await actionSheetController.create({
-    header: "Photos",
-    buttons: [
-      {
-        text: "Delete",
-        role: "destructive",
-        icon: trash,
-        handler: () => {
-          deletePhoto(photo);
-        },
-      },
-      {
-        text: "Cancel",
-        icon: close,
-        role: "cancel",
-        handler: () => {
-          // Nothing to do, action sheet is automatically closed
-        },
-      },
-    ],
-  });
-  await actionSheet.present();
-};
 
 export default {
   name: "Tab2",
@@ -85,9 +63,35 @@ export default {
   },
   setup() {
     const { photos, takePhoto, deletePhoto } = usePhotoGallery();
+
+    const showActionSheet = async (photo: Photo) => {
+      const actionSheet = await actionSheetController.create({
+        header: "Photos",
+        buttons: [
+          {
+            text: "Delete",
+            role: "destructive",
+            icon: trash,
+            handler: () => {
+              deletePhoto(photo);
+            },
+          },
+          {
+            text: "Cancel",
+            icon: close,
+            role: "cancel",
+            handler: () => {
+              // Nothing to do, action sheet is automatically closed
+            },
+          },
+        ],
+      });
+      await actionSheet.present();
+    };
     return {
       photos,
       takePhoto,
+      deletePhoto,
       showActionSheet,
       camera,
       trash,
